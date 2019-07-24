@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 
         isGrounded = Physics2D.OverlapCircle(groundPos.position, checkRadius, whatIsGround);
 
-        if (isGrounded == true && Input.GetKeyDown(KeyCode.Z))
+        if (isGrounded == true && Input.GetButtonDown("Jump"))
         {
             anim.SetTrigger("takeOf");
             isJumping = true;
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (Input.GetKey(KeyCode.Z) && isJumping == true)
+        if (Input.GetButtonDown("Jump") && isJumping == true)
         {
             if (jumpTimeCounter > 0)
             {
@@ -63,13 +63,13 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetButtonDown("Jump"))
         {
             isJumping = false;
 
         }
 
-        if (isGrounded == false && doubleJump == false && Input.GetKeyDown(KeyCode.Z)) {
+        if (isGrounded == false && doubleJump == false && Input.GetButtonDown("Jump")) {
             isJumping = true;
             doubleJump = true;
             isJumping = true;
