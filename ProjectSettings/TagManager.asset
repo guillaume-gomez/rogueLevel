@@ -7,6 +7,9 @@ TagManager:
   - Tile
   - Room
   - BorderBlock
+  - LevelGenerator
+  - Block
+  - RoomTemplates
   layers:
   - Default
   - TransparentFX
@@ -17,8 +20,8 @@ TagManager:
   - 
   - 
   - Room
-  - 
-  - 
+  - Player
+  - Block
   - 
   - 
   - 
@@ -43,4 +46,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Block
+    uniqueID: 760914597
+    locked: 0
+  - name: Character
+    uniqueID: 300025511
     locked: 0
