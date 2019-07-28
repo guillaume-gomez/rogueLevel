@@ -7,7 +7,6 @@ public class RoomType : MonoBehaviour
   public int type;
 
   public void RoomDestruction() {
-    Debug.Log("RoomDestruction");
     Destroy(gameObject);
   }
 }
