@@ -26,6 +26,7 @@ public class LevelGeneration : MonoBehaviour
     public float maxY = 25;
     private float step = 10;
     public bool stopGeneration = false;
+    public GameObject player;
 
     public LayerMask room;
 
@@ -50,12 +51,35 @@ public class LevelGeneration : MonoBehaviour
 
     void StartGeneration() {
       int randStartingPosition = Random.Range(0, startingPositions.Length);
-        transform.position = startingPositions[randStartingPosition].position;
+      transform.position = startingPositions[randStartingPosition].position;
 
-        int randomRoomIndex = Random.Range(0, rooms.Length);
-        Instantiate(rooms[randomRoomIndex], transform.position, Quaternion.identity);
+      CreateRoom(0, rooms.Length);
+      direction = Random.Range(1, 6);
+    }
 
-        direction = Random.Range(1, 6);
+    public void CreateRoom(int min, int max, Vector3 pos) {
+      int randomRoomIndex = Random.Range(min, max);
+      GameObject instanciateRoom = Instantiate(rooms[randomRoomIndex], pos, Quaternion.identity);
+    }
+
+    void CreateRoom(int min, int max) {
+      CreateRoom(min, max, transform.position);
+    }
+
+    void CreateRoom(int randomRoomIndex)
+    {
+      GameObject instanciateRoom = Instantiate(rooms[randomRoomIndex], transform.position, Quaternion.identity);
+    }
+
+    void DisableColliderInRoom() {
+      GameObject[] generatedRooms = GameObject.FindGameObjectsWithTag("RoomTemplates");
+      foreach (GameObject currentRoom in generatedRooms) {
+        // we assume that the first child is the room
+        GameObject roomInRoomTemplate = currentRoom.transform.GetChild(0).gameObject;
+        if(roomInRoomTemplate.GetComponent<RoomType>()) {
+          roomInRoomTemplate.GetComponent<RoomType>().DisableCollider();
+        }
+      }
     }
 
     void Update() {
@@ -74,8 +98,7 @@ public class LevelGeneration : MonoBehaviour
           Vector2 newPos = new Vector2(transform.position.x + moveAmount, transform.position.y);
           transform.position = newPos;
 
-          int rand = Random.Range(0, rooms.Length);
-          Instantiate(rooms[rand], transform.position, Quaternion.identity);
+          CreateRoom(0, rooms.Length);
 
           direction = Random.Range(1, 6);
           if(direction == 3) {
@@ -92,8 +115,7 @@ public class LevelGeneration : MonoBehaviour
           Vector2 newPos = new Vector2(transform.position.x - moveAmount, transform.position.y);
           transform.position = newPos;
 
-          int rand = Random.Range(0, rooms.Length);
-          Instantiate(rooms[rand], transform.position, Quaternion.identity);
+          CreateRoom(0, rooms.Length);
 
           direction = Random.Range(3, 6);
         } else {
@@ -106,30 +128,30 @@ public class LevelGeneration : MonoBehaviour
           if(roomDetection.GetComponent<RoomType>().type != 1 && roomDetection.GetComponent<RoomType>().type != 3) {
             if(downCounter >= 2) {
               roomDetection.GetComponent<RoomType>().RoomDestruction();
-              Instantiate(rooms[3], transform.position, Quaternion.identity);
+              CreateRoom(3);
             } else {
               roomDetection.GetComponent<RoomType>().RoomDestruction();
               int randomBottomRoom = Random.Range(1, rooms.Length);
               if(randomBottomRoom == 2) {
                 randomBottomRoom = 1;
               }
-              Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+              CreateRoom(randomBottomRoom);
             }
           }
 
           Vector2 newPos = new Vector2(transform.position.x, transform.position.y - moveAmount);
           transform.position = newPos;
 
-          int rand = Random.Range(2, rooms.Length);
-          Instantiate(rooms[rand], transform.position, Quaternion.identity);
-
+          CreateRoom(2, rooms.Length);
           direction = Random.Range(1, 6);
         } else {
           // stop generation
           stopGeneration = true;
+          player.SetActive(true);
+          Invoke("DisableColliderInRoom", 5);
+          //player.transform.position = new Vector2(-0f, 0.0f);
           return;
         }
       }
-      //Instantiate(rooms[0], transform.position, Quaternion.identity);
     }
 }

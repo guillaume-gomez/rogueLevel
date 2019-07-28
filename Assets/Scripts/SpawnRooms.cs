@@ -17,6 +17,7 @@ public class SpawnRooms : MonoBehaviour
       if(levelGen.stopGeneration == true) {
         Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, whatIsRoom);
         if(roomDetection == null) {
+          //levelGen.CreateRoom(0, levelGen.rooms.Length, transform.position);
           int rand = Random.Range(0, levelGen.rooms.Length);
           Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
         }
