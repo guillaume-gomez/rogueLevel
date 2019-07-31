@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// todo use fixed update
+
 public class PlayerController : MonoBehaviour
 {
 
