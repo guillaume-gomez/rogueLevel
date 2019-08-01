@@ -32,8 +32,15 @@ public class LevelGeneration : MonoBehaviour
 
     void Start()
     {
+      SetUpTopPoses();
       FillLayout();
       StartGeneration();
+    }
+
+    void SetUpTopPoses() {
+      for(int i = 0; i < 4; i++) {
+        Instantiate(posePrefab, new Vector2(minX + i * step, 5), Quaternion.identity);
+      }
     }
 
 
