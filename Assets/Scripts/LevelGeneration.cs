@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelGeneration : MonoBehaviour
 {
 
-    public Transform[] startingPositions;
+    public List<Transform> startingPositions;
     public GameObject posePrefab;
     public GameObject[] rooms;
     // index 0 => LR
@@ -32,14 +32,16 @@ public class LevelGeneration : MonoBehaviour
 
     void Start()
     {
-      SetUpTopPoses();
+      //SetUpTopPoses();
       FillLayout();
       StartGeneration();
     }
 
     void SetUpTopPoses() {
       for(int i = 0; i < 4; i++) {
-        Instantiate(posePrefab, new Vector2(minX + i * step, 5), Quaternion.identity);
+        Vector2 pos = new Vector2(minX + i * step, 5);
+        GameObject instance = Instantiate(posePrefab, pos, Quaternion.identity);
+        startingPositions.Add(instance.transform);
       }
     }
 
@@ -47,9 +49,8 @@ public class LevelGeneration : MonoBehaviour
     void FillLayout()
     {
       // the difference to fit in the borders
-      float offsetY = 30;
+      float offsetY = 20;
       for(float x = minX; x <= maxX; x += step) {
-        // the firt row is done manually
         for(float y = minY + offsetY; y <= maxY; y += step) {
           Instantiate(posePrefab, new Vector2(x, -y), Quaternion.identity);
         }
@@ -57,7 +58,7 @@ public class LevelGeneration : MonoBehaviour
     }
 
     void StartGeneration() {
-      int randStartingPosition = Random.Range(0, startingPositions.Length);
+      int randStartingPosition = Random.Range(0, startingPositions.Count);
       transform.position = startingPositions[randStartingPosition].position;
 
       CreateRoom(0, rooms.Length);
