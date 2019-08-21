@@ -5,8 +5,9 @@ using UnityEngine;
 public class LevelGeneration : MonoBehaviour
 {
 
-    public List<Transform> startingPositions;
+    private List<Transform> startingPositions;
     public GameObject posePrefab;
+    public GameObject borderBlocPrefab;
     public GameObject[] rooms;
     // index 0 => LR
     // index 1 => LRB
@@ -14,17 +15,15 @@ public class LevelGeneration : MonoBehaviour
     // index 3 => LRBT
 
     private int direction;
-    public float moveAmount;
     private int downCounter;
 
     private float timeBtwRoom;
     public float startTimeBtwRoom = 0.25f;
 
-    public float minX = -5;
-    public float maxX = 25;
+    public float minX = 5;
+    public float maxX = 35;
     public float minY = -25;
-    public float maxY = 25;
-    private float step = 10;
+    public float moveAmount = 10;
     public bool stopGeneration = false;
     public GameObject player;
 
@@ -32,27 +31,43 @@ public class LevelGeneration : MonoBehaviour
 
     void Start()
     {
-      //SetUpTopPoses();
+      //CreateBorders();
+      SetUpTopPoses();
       FillLayout();
       StartGeneration();
     }
 
     void SetUpTopPoses() {
-      for(int i = 0; i < 4; i++) {
-        Vector2 pos = new Vector2(minX + i * step, 5);
+      float offset = moveAmount / 2;
+      startingPositions = new List<Transform>();
+      for(int i = 0; i < 4; i++)
+      {
+        Vector2 pos = new Vector2((i * moveAmount) + offset, offset);
         GameObject instance = Instantiate(posePrefab, pos, Quaternion.identity);
         startingPositions.Add(instance.transform);
       }
     }
 
+    void CreateBorders()
+    {
+      /*float offsetY = 0;
+      for(float x = minX - 5; x < maxX + 6; x++)
+      {
+        for(float y = minY + offsetY; y < maxY; y++)
+        {
+          Instantiate(borderBlocPrefab, new Vector2(x, y), Quaternion.identity);
+        }
+      }*/
+    }
 
     void FillLayout()
     {
-      // the difference to fit in the borders
-      float offsetY = 20;
-      for(float x = minX; x <= maxX; x += step) {
-        for(float y = minY + offsetY; y <= maxY; y += step) {
-          Instantiate(posePrefab, new Vector2(x, -y), Quaternion.identity);
+      float offset = moveAmount / 2;
+      for(int x = 0; x < 4; x++)
+      {
+        for(int y = 1; y < 4; y++)
+        {
+          Instantiate(posePrefab, new Vector2((x * moveAmount) + offset, -(y * moveAmount) + offset), Quaternion.identity);
         }
       }
     }
@@ -81,17 +96,20 @@ public class LevelGeneration : MonoBehaviour
 
     void DisableColliderInRoom() {
       GameObject[] generatedRooms = GameObject.FindGameObjectsWithTag("RoomTemplates");
-      foreach (GameObject currentRoom in generatedRooms) {
+      foreach (GameObject currentRoom in generatedRooms)
+      {
         // we assume that the first child is the room
         GameObject roomInRoomTemplate = currentRoom.transform.GetChild(0).gameObject;
-        if(roomInRoomTemplate.GetComponent<RoomType>()) {
+        if(roomInRoomTemplate.GetComponent<RoomType>())
+        {
           roomInRoomTemplate.GetComponent<RoomType>().DisableCollider();
         }
       }
     }
 
     void Update() {
-      if(timeBtwRoom <= 0 && !stopGeneration) {
+      if(timeBtwRoom <= 0 && !stopGeneration)
+      {
         Move();
         timeBtwRoom = startTimeBtwRoom;
       } else {
@@ -101,7 +119,8 @@ public class LevelGeneration : MonoBehaviour
 
     private void Move() {
       if(direction == 1 || direction == 2) { // Move Right
-        if (transform.position.x < maxX) {
+        if (transform.position.x < maxX)
+        {
           downCounter = 0;
           Vector2 newPos = new Vector2(transform.position.x + moveAmount, transform.position.y);
           transform.position = newPos;
@@ -117,8 +136,10 @@ public class LevelGeneration : MonoBehaviour
         } else {
           direction = 5;
         }
-      } else if (direction == 3 || direction == 4) { // Move Left
-        if (transform.position.x > minX) {
+      } else if (direction == 3 || direction == 4)
+      { // Move Left
+        if (transform.position.x > minX)
+        {
           downCounter = 0;
           Vector2 newPos = new Vector2(transform.position.x - moveAmount, transform.position.y);
           transform.position = newPos;
