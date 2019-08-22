@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
 
         isGrounded = Physics2D.OverlapCircle(groundPos.position, checkRadius, whatIsGround);
