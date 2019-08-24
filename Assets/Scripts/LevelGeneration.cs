@@ -20,9 +20,11 @@ public class LevelGeneration : MonoBehaviour
     private float timeBtwRoom;
     public float startTimeBtwRoom = 0.25f;
 
-    public float minX = 5;
-    public float maxX = 35;
-    public float minY = -25;
+    private float minX;
+    private float maxX;
+    private float minY;
+    public int nbHorizontalRoom = 4;
+    public int nbVerticalRoom = 4;
     public float moveAmount = 10;
     public bool stopGeneration = false;
     public GameObject player;
@@ -31,7 +33,11 @@ public class LevelGeneration : MonoBehaviour
 
     void Start()
     {
-      //CreateBorders();
+      minX = moveAmount / 2;
+      maxX = (nbHorizontalRoom * moveAmount) - moveAmount/2;
+      minY = -(nbVerticalRoom * moveAmount) + moveAmount + moveAmount/2;
+
+      CreateBorders();
       SetUpTopPoses();
       FillLayout();
       StartGeneration();
@@ -40,7 +46,7 @@ public class LevelGeneration : MonoBehaviour
     void SetUpTopPoses() {
       float offset = moveAmount / 2;
       startingPositions = new List<Transform>();
-      for(int i = 0; i < 4; i++)
+      for(int i = 0; i < nbHorizontalRoom; i++)
       {
         Vector2 pos = new Vector2((i * moveAmount) + offset, offset);
         GameObject instance = Instantiate(posePrefab, pos, Quaternion.identity);
@@ -50,22 +56,29 @@ public class LevelGeneration : MonoBehaviour
 
     void CreateBorders()
     {
-      /*float offsetY = 0;
-      for(float x = minX - 5; x < maxX + 6; x++)
-      {
-        for(float y = minY + offsetY; y < maxY; y++)
-        {
-          Instantiate(borderBlocPrefab, new Vector2(x, y), Quaternion.identity);
-        }
-      }*/
+      Transform boardHolder = new GameObject("Borders").transform;
+      //horizontal
+      for(int x = 0; x < nbHorizontalRoom * moveAmount; x++) {
+        GameObject instance = Instantiate(borderBlocPrefab, new Vector2(x + 0.5f, moveAmount + 0.5f), Quaternion.identity);
+        instance.transform.SetParent(boardHolder);
+        instance = Instantiate(borderBlocPrefab, new Vector2(x + 0.5f, minY - (moveAmount/2) - 0.5f), Quaternion.identity);
+        instance.transform.SetParent(boardHolder);
+      }
+      // vertical
+      for(int y = 0; y < (nbVerticalRoom * moveAmount) + 2; y++) {
+        GameObject instance = Instantiate(borderBlocPrefab, new Vector2(-0.5f, minY - (moveAmount / 2) - 0.5f + y), Quaternion.identity);
+        instance.transform.SetParent(boardHolder);
+        instance = Instantiate(borderBlocPrefab, new Vector2(nbHorizontalRoom * moveAmount + 0.5f, minY - (moveAmount / 2) - 0.5f + y), Quaternion.identity);
+        instance.transform.SetParent(boardHolder);
+      }
     }
 
     void FillLayout()
     {
       float offset = moveAmount / 2;
-      for(int x = 0; x < 4; x++)
+      for(int x = 0; x < nbHorizontalRoom; x++)
       {
-        for(int y = 1; y < 4; y++)
+        for(int y = 1; y < nbVerticalRoom; y++)
         {
           Instantiate(posePrefab, new Vector2((x * moveAmount) + offset, -(y * moveAmount) + offset), Quaternion.identity);
         }
