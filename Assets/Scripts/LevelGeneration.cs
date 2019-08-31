@@ -89,6 +89,9 @@ public class LevelGeneration : MonoBehaviour
       int randStartingPosition = Random.Range(0, startingPositions.Count);
       transform.position = startingPositions[randStartingPosition].position;
 
+      //set player position
+      player.transform.position = startingPositions[randStartingPosition].position;
+
       CreateRoom(0, rooms.Length);
       direction = Random.Range(1, 6);
     }
@@ -190,7 +193,7 @@ public class LevelGeneration : MonoBehaviour
           // stop generation
           stopGeneration = true;
           player.SetActive(true);
-          Invoke("DisableColliderInRoom", 5);
+          Invoke("DisableColliderInRoom", 1);
           //player.transform.position = new Vector2(-0f, 0.0f);
           return;
         }
